@@ -1,10 +1,18 @@
 import InputField from "@/components/shared/InputField";
 import { Button } from "@/components/ui/button";
 import { getGreeting } from "@/lib/utils";
-import { UserButton, currentUser } from "@clerk/nextjs";
+import { UserButton, auth, currentUser } from "@clerk/nextjs";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import EntryList from "@/components/shared/EntryList";
+import { Suspense } from "react";
+import EntrySkeleton from "@/components/shared/EntrySkeleton";
 
 export default async function Home() {
+  const { userId } = auth();
+
+  if (!userId) redirect("/sign-in");
+
   const user = await currentUser();
 
   if (!user) {
@@ -22,12 +30,19 @@ export default async function Home() {
     <div className="w-full h-screen flex flex-col items-center justify-center">
       <div className="min-w-[650px] flex flex-col items-center justify-center">
         <div className="mb-6">
-          <UserButton afterSignOutUrl="/" />
+          <UserButton afterSignOutUrl="/sign-in" />
         </div>
         <h1 className="text-5xl mb-12">{`${getGreeting()}, ${
           user?.firstName || "Guest"
         }`}</h1>
-        <InputField />
+        {userId ? (
+          <InputField clerkId={userId} />
+        ) : (
+          <div>User is not logged in</div>
+        )}
+        <Suspense fallback={<EntrySkeleton />}>
+          <EntryList />
+        </Suspense>
       </div>
     </div>
   );
