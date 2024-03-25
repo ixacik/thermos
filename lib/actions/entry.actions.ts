@@ -48,7 +48,8 @@ export async function getEntries(clerkId: string) {
   try {
     await connectToDatabase();
 
-    const entries = await Entry.find({ clerkId });
+    const entriesDocuments = await Entry.find({ clerkId });
+    const entries = entriesDocuments.map((entry) => entry.toObject());
 
     return entries;
   } catch (error) {
@@ -61,6 +62,7 @@ export async function deleteEntry(_id: string) {
     await connectToDatabase();
 
     await Entry.deleteOne({ _id });
+    revalidatePath("/");
   } catch (error) {
     console.log(error);
   }

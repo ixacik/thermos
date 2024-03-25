@@ -5,15 +5,26 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { useState } from "react";
 import { createEntry } from "@/lib/actions/entry.actions";
-import { useRouter } from "next/navigation";
 import { getMacros } from "@/lib/actions/chatgpt.actions";
 
-const InputField = ({ clerkId }: { clerkId: string }) => {
+const InputField = ({
+  clerkId,
+  setOptimisticEntries,
+}: {
+  clerkId: string;
+  setOptimisticEntries: (action: any) => void;
+}) => {
   const [name, setName] = useState<string>("");
 
-  const router = useRouter();
-
   const submit = async () => {
+    setOptimisticEntries({
+      name,
+      calories: 0,
+      protein: 0,
+      carbs: 0,
+      fat: 0,
+    });
+
     const macros = await getMacros(name);
     if (!macros) return console.log("Error fetching macros from openai.");
 

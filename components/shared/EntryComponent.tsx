@@ -1,12 +1,24 @@
-import { getEntries } from "@/lib/actions/entry.actions";
+"use client";
+
+import { useOptimistic } from "react";
 import Entry from "./Entry";
-import { auth } from "@clerk/nextjs";
+import { IEntry } from "@/db/models/entry.model";
+import InputField from "./InputField";
 
-const EntryList = async () => {
-  const { userId } = auth();
-  if (!userId) return null;
+const EntryComponent = ({
+  entries,
+  clerkId,
+}: {
+  entries: IEntry[];
+  clerkId: string;
+}) => {
+  const [optimisticEntries, setOptimisticEntries] = useOptimistic(
+    entries,
+    (state, newEntry: any) => {
+      return [...state, newEntry];
+    }
+  );
 
-  const entries = await getEntries(userId);
   const totalCalories = entries?.reduce(
     (acc, entry) => acc + entry.calories,
     0
@@ -14,10 +26,14 @@ const EntryList = async () => {
 
   return (
     <>
-      {entries && entries.length > 0 && (
+      <InputField
+        clerkId={clerkId}
+        setOptimisticEntries={setOptimisticEntries}
+      />
+      {optimisticEntries && optimisticEntries.length > 0 && (
         <>
           <div className="border rounded-b-lg w-full flex flex-col divide-y">
-            {entries.map((entry) => (
+            {optimisticEntries.map((entry) => (
               <Entry
                 key={entry._id}
                 _id={entry._id}
@@ -26,6 +42,7 @@ const EntryList = async () => {
                 protein={entry.protein}
                 carbs={entry.carbs}
                 fat={entry.fat}
+                optimisticEntries={optimisticEntries}
               />
             ))}
           </div>
@@ -39,4 +56,4 @@ const EntryList = async () => {
     </>
   );
 };
-export default EntryList;
+export default EntryComponent;
