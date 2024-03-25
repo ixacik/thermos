@@ -3,7 +3,6 @@
 import { deleteEntry } from "@/lib/actions/entry.actions";
 import { X } from "lucide-react";
 import { Skeleton } from "../ui/skeleton";
-import { IEntry } from "@/db/models/entry.model";
 
 interface EntryProps {
   _id?: string;

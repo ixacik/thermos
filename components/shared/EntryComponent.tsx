@@ -35,14 +35,13 @@ const EntryComponent = ({
           <div className="border rounded-b-lg w-full flex flex-col divide-y">
             {optimisticEntries.map((entry) => (
               <Entry
-                key={entry._id}
+                key={entry._id || entry.name}
                 _id={entry._id}
                 name={entry.name}
                 calories={entry.calories}
                 protein={entry.protein}
                 carbs={entry.carbs}
                 fat={entry.fat}
-                optimisticEntries={optimisticEntries}
               />
             ))}
           </div>

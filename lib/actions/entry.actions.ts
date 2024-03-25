@@ -48,7 +48,11 @@ export async function getEntries(clerkId: string) {
   try {
     await connectToDatabase();
 
-    const entriesDocuments = await Entry.find({ clerkId });
+    const today = new Date().setHours(0, 0, 0, 0);
+    const entriesDocuments = await Entry.find({
+      clerkId,
+      date: { $gte: today },
+    });
     const entries = entriesDocuments.map((entry) => entry.toObject());
 
     return entries;

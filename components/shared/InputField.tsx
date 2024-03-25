@@ -3,7 +3,7 @@
 import { getMealType } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { useState } from "react";
+import { useState, useTransition } from "react";
 import { createEntry } from "@/lib/actions/entry.actions";
 import { getMacros } from "@/lib/actions/chatgpt.actions";
 
@@ -15,15 +15,19 @@ const InputField = ({
   setOptimisticEntries: (action: any) => void;
 }) => {
   const [name, setName] = useState<string>("");
+  const [isPending, dispatch] = useTransition();
 
   const submit = async () => {
-    setOptimisticEntries({
-      name,
-      calories: 0,
-      protein: 0,
-      carbs: 0,
-      fat: 0,
-    });
+    dispatch(() =>
+      setOptimisticEntries({
+        name,
+        clerkId,
+        calories: 0,
+        protein: 0,
+        carbs: 0,
+        fat: 0,
+      })
+    );
 
     const macros = await getMacros(name);
     if (!macros) return console.log("Error fetching macros from openai.");
