@@ -1,15 +1,11 @@
-import InputField from "@/components/shared/InputField";
 import { Button } from "@/components/ui/button";
 import { getGreeting } from "@/lib/utils";
 import { UserButton, auth, currentUser } from "@clerk/nextjs";
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import EntryList from "@/components/shared/EntryComponent";
-import { Suspense, useOptimistic } from "react";
-import EntrySkeleton from "@/components/shared/EntrySkeleton";
-import { getEntries } from "@/lib/actions/entry.actions";
 import { IEntry } from "@/db/models/entry.model";
 import EntryComponent from "@/components/shared/EntryComponent";
+import { getEntries } from "@/lib/actions/entry.actions";
 
 export default async function Home() {
   const { userId } = auth();
